@@ -1,10 +1,19 @@
 {
   "exim": {
-    "file": "X:\\exim\\mainlog",
+    "file": "/var/log/exim/mainlog",
     "attemptlimit": 3,
-    "iplimit": 2,
+    "iplimit": 20,
     "lookfor": [
-      "535 Incorrect authentication data"
+      "535 Incorrect authentication data",
+      "Bad HELO - Blocked due to abuse"
+    ]
+  },
+  "named": {
+    "file": "/var/named/data/named.run",
+    "attemptlimit": 50,
+    "iplimit": 10,
+    "lookfor": [
+      "denied"
     ]
   }
 }
