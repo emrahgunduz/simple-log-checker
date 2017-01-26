@@ -52,9 +52,9 @@ function dateFormat () {
   var curr_date  = date.getDate().toString().paddingLeft( "  " );
   var curr_month = date.getMonth();
   var curr_year  = date.getFullYear();
-  var curr_min   = date.getMinutes().toString().paddingLeft( "  " );
-  var curr_hr    = date.getHours().toString().paddingLeft( "  " );
-  var curr_sc    = date.getSeconds().toString().paddingLeft( "  " );
+  var curr_min   = date.getMinutes().toString().paddingLeft( "00" );
+  var curr_hr    = date.getHours().toString().paddingLeft( "00" );
+  var curr_sc    = date.getSeconds().toString().paddingLeft( "00" );
 
   return months[ curr_month ] + " " + curr_date + " " + curr_year + " - " + curr_hr + ":" + curr_min + ":" + curr_sc;
 }
