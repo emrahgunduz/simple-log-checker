@@ -1,4 +1,4 @@
-# Simple Log Picker
+# Simple Log Checker
 
 Simple Log Picker is a javascript node application for reading defined logs and banning ips or subnets, if log contains defined string(s). Simply create a configuration file, and a safe ip list file. App does the rest.
 
