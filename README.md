@@ -58,3 +58,5 @@ If you want to do a dry-run to see what is going on, simply run the application 
 You can use "ipset list" to see what is currently banned.
 
 App does not make the ipset lists permanent, so a restart will clear all.
+
+If you are using a different firewall then iptables and ipset, you can alter commands which the app executes. These are located in the "ban.js" file and documented right at the beginning of the file.

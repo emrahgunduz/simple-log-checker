@@ -1,8 +1,3 @@
-var fs        = require( "fs" );
-var lib       = require( __dirname + "/utils/lib" );
-var network   = require( __dirname + "/utils/network" );
-var logReader = require( __dirname + "/utils/logreader" );
-
 // These are the commands used by the app.
 // You can change these if you want to use any other firewall
 //
@@ -18,6 +13,11 @@ global.COMMANDS = {
   BANIP    : "ipset add %%-ip %%",
   BANNET   : "ipset add %%-net %%.0/24"
 };
+
+var fs        = require( "fs" );
+var lib       = require( __dirname + "/utils/lib" );
+var network   = require( __dirname + "/utils/network" );
+var logReader = require( __dirname + "/utils/logreader" );
 
 // If DEBUG is true, app will not ban any ip or subnets
 global.DEBUG = false;
