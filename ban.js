@@ -6,12 +6,12 @@
 // - For ban commands first %% is replaced with log type, second is the ip/subnet to be banned,
 //   you must keep the locations as is.
 global.COMMANDS = {
-  CREATEIP : "ipset create %%-ip hash:ip", // create an ip list
-  ADDIP    : "iptables -I INPUT -m set --match-set %%-ip src -p ALL -j DROP", // add ip list to iptables
-  CREATENET: "ipset create %%-net hash:net", // create a subnet list
-  ADDNET   : "iptables -I INPUT -m set --match-set %%-net src -p ALL -j DROP", // add subnet list to iptables
-  BANIP    : "ipset add %%-ip %%",
-  BANNET   : "ipset add %%-net %%.0/24"
+  CREATEIP     : "ipset create %%-ip hash:ip -exist", // create an ip list
+  ADDIP        : "iptables -I INPUT -m set --match-set %%-ip src -p ALL -j DROP", // add ip list to iptables
+  CREATENET    : "ipset create %%-net hash:net -exist", // create a subnet list
+  ADDNET       : "iptables -I INPUT -m set --match-set %%-net src -p ALL -j DROP", // add subnet list to iptables
+  BANIP        : "ipset add %%-ip %%",
+  BANNET       : "ipset add %%-net %%.0/24",
 };
 
 var fs        = require( "fs" );
@@ -81,21 +81,21 @@ function Run () {
 
 Run();
 
-//process.stdin.resume();//so the program will not close instantly
-//
-//function exitHandler ( options, err ) {
-//  if ( options.cleanup ) {
-//    global.logger( "EXIT", "Process stop received, terminating jobs, please wait..." );
-//    readers.map( function ( reader ) {
-//      reader.stop();
-//    } );
-//  }
-//  setTimeout( function () {
-//    if ( err ) console.log( err.stack );
-//    process.exit();
-//  }, 250 );
-//}
-//
-//process.on( "exit", exitHandler.bind( null, { cleanup: true } ) );
-//process.on( "SIGINT", exitHandler.bind( null, {} ) );
-//process.on( "uncaughtException", exitHandler.bind( null, {} ) );
+process.stdin.resume();//so the program will not close instantly
+
+function exitHandler ( options, err ) {
+  if ( options.cleanup ) {
+    global.logger( "EXIT", "Process stop received, terminating jobs, please wait..." );
+    readers.map( function ( reader ) {
+      reader.stop();
+    } );
+  }
+  setTimeout( function () {
+    if ( err ) console.log( err.stack );
+    process.exit();
+  }, 250 );
+}
+
+process.on( "exit", exitHandler.bind( null, { cleanup: true } ) );
+process.on( "SIGINT", exitHandler.bind( null, {} ) );
+process.on( "uncaughtException", exitHandler.bind( null, {} ) );
