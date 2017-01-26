@@ -132,9 +132,11 @@ Network.prototype.ip = function ( ip, from, attemptLimit, ipLimit ) {
   // Do not check for safe ips
   if ( global.SAFEIPS.contains( ip ) ) return;
 
+  if ( !this.__waitingIpList.hasOwnProperty( from ) )
+    this.__waitingIpList[ from ] = [];
+
   // Wait for ipset lists creation, keep ips accessible
   if ( this.__wait ) {
-    if ( !this.__waitingIpList.hasOwnProperty( from ) ) this.__waitingIpList[ from ] = [];
     this.__waitingIpList[ from ].push( { ip: ip, from: from, attemptLimit: attemptLimit, ipLimit: ipLimit } );
     return;
   }
