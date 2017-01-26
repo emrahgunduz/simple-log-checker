@@ -5,13 +5,16 @@
 // - For create and add commands %% are replaced with log type
 // - For ban commands first %% is replaced with log type, second is the ip/subnet to be banned,
 //   you must keep the locations as is.
+// - For destroy commands, both %% are replaced with log type.
 global.COMMANDS = {
-  CREATEIP     : "ipset create %%-ip hash:ip -exist", // create an ip list
-  ADDIP        : "iptables -I INPUT -m set --match-set %%-ip src -p ALL -j DROP", // add ip list to iptables
-  CREATENET    : "ipset create %%-net hash:net -exist", // create a subnet list
-  ADDNET       : "iptables -I INPUT -m set --match-set %%-net src -p ALL -j DROP", // add subnet list to iptables
-  BANIP        : "ipset add %%-ip %%",
-  BANNET       : "ipset add %%-net %%.0/24"
+  CREATEIP  : "ipset create %%-ip hash:ip -exist", // create an ip list
+  ADDIP     : "iptables -I INPUT -m set --match-set %%-ip src -p ALL -j DROP", // add ip list to iptables
+  CREATENET : "ipset create %%-net hash:net -exist", // create a subnet list
+  ADDNET    : "iptables -I INPUT -m set --match-set %%-net src -p ALL -j DROP", // add subnet list to iptables
+  BANIP     : "ipset add %%-ip %%",
+  BANNET    : "ipset add %%-net %%.0/24",
+  DESTROYIP : "ipset destroy %%-ip && iptables -D INPUT -m set --match-set %%-ip",
+  DESTROYNET: "ipset destroy %%-net && iptables -D INPUT -m set --match-set %%-net"
 };
 
 var fs        = require( "fs" );

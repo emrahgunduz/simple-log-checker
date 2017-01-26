@@ -79,6 +79,11 @@ Network.prototype.__net = function ( net, from ) {
   } );
 };
 
+Network.prototype.destroy = function ( from ) {
+  this.__exec( global.COMMANDS.DESTROYIP.localizer( from, from ) );
+  this.__exec( global.COMMANDS.DESTROYNET.localizer( from, from ) );
+};
+
 Network.prototype.ban = function ( ip, from, attemptLimit, ipLimit ) {
   var subnets = ip.split( "." );
   subnets.pop();
@@ -93,7 +98,7 @@ Network.prototype.ban = function ( ip, from, attemptLimit, ipLimit ) {
       // Increasing denied counter for ip
       this.__ipList[ ip ].c++;
 
-      if ( !this.__ipList[ ip ].b && this.__ipList[ ip ].c >= attemptLimit ) {
+      if ( attemptLimit > 0 && !this.__ipList[ ip ].b && this.__ipList[ ip ].c >= attemptLimit ) {
         global.logger( from, "IP BAN  - %% : %% denies".localizer( ip.paddingLeft( "               " ), this.__ipList[ ip ].c.toString().paddingLeft( "   " ) ) );
 
         this.__ipList[ ip ].b = true;
@@ -110,7 +115,7 @@ Network.prototype.ban = function ( ip, from, attemptLimit, ipLimit ) {
       // Adding ip to network list
       this.__netList[ net ].c.push( ip );
 
-      if ( !this.__netList[ net ].b && this.__netList[ net ].c.length >= ipLimit ) {
+      if ( ipLimit > 0 && !this.__netList[ net ].b && this.__netList[ net ].c.length >= ipLimit ) {
         global.logger( from, "NET BAN - %%.0/24 : %% ip adresses".localizer( net.paddingLeft( "          " ), this.__netList[ net ].c.length.toString().paddingLeft( "   " ) ) );
 
         this.__netList[ net ].b = true;

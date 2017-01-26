@@ -8,6 +8,7 @@ function LogReader ( key, information, currentNetwork ) {
 }
 
 LogReader.prototype.stop = function () {
+  this.__network.destroy( this.__key );
   global.logger( this.__key, "Stopping..." );
   this.__stopped = true;
 };

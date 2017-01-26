@@ -2,7 +2,7 @@
 
 Simple Log Checker is a javascript node application for reading defined logs and banning ips or subnets, if log contains defined string(s). Simply create a configuration file, and a safe ip list file. App does the rest.
 
-Depends on "ipset" and "iptables".
+Depends on `ipset` and `iptables`.
 
 Here is a simple configuration file (logs.json)
 ```json
@@ -40,8 +40,8 @@ So, what is what in here?
 * Write the name of the app, or what you want to call it as the key.
 * file: Name of the log file.
 * attemptlimit: Limit for any ip. If limit is exceeded, ip gets banned
-* iplimit: This is a limit for subnet banning. If same subnet ip list gets bigger than this, subnet is banned.
-* lookfor: An array of strings to search for. On every new log file, if any is found, a ban is called.
+* iplimit: This is a limit for subnet banning. If same subnet ip list gets bigger than this, subnet is banned (value of 0 or smaller disables banning).
+* lookfor: An array of strings to search for. On every new log file, if any is found, a ban is called (value of 0 or smaller disables banning).
 
 Here is a simple safe ip list file (safe.json)
 ```json
@@ -53,9 +53,10 @@ Here is a simple safe ip list file (safe.json)
 ```
 Enter a single IP in each line. These IP addesses will not be banned on any flood or attempt.
 
-If you want to do a dry-run to see what is going on, simply run the application with "debug" argument. This will stop banning of ips and subnets but will continue to check logs and dump information on screen.
+If you want to do a dry-run to see what is going on, simply run the application with `debug` argument. This will stop banning of ips and subnets but will continue to check logs and dump information on screen.
 
-You can use "ipset list" to see what is currently banned.
+You can use `ipset list` to see what is currently banned.
 App does not make the ipset lists permanent, so a restart will clear all.
+For more information, check [ipset man page](https://linux.die.net/man/8/ipset).
 
-If you are using a different firewall then iptables, you can alter commands which the app executes. These are located in the "ban.js" file and documented right at the beginning of the file.
+If you are using a different firewall then `iptables`, you can alter commands which the app executes. These are located in the "ban.js" file and documented right at the beginning of the file.
