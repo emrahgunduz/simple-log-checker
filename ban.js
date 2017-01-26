@@ -13,8 +13,8 @@ global.COMMANDS = {
   ADDNET    : "iptables -I INPUT -m set --match-set %%-net src -p ALL -j DROP", // add subnet list to iptables
   BANIP     : "ipset add %%-ip %%",
   BANNET    : "ipset add %%-net %%.0/24",
-  DESTROYIP : "iptables -D INPUT -m set --match-set %%-ip src -p ALL -j DROP %%-ip && ipset destroy %%-ip",
-  DESTROYNET: "iptables -D INPUT -m set --match-set %%-net src -p ALL -j DROP %%-net && ipset destroy %%-net"
+  DESTROYIP : "iptables -D INPUT -m set --match-set %%-ip src -p ALL -j DROP && ipset destroy %%-ip",
+  DESTROYNET: "iptables -D INPUT -m set --match-set %%-net src -p ALL -j DROP && ipset destroy %%-net"
 };
 
 var fs        = require( "fs" );
