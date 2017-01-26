@@ -3,6 +3,22 @@ var lib       = require( __dirname + "/utils/lib" );
 var network   = require( __dirname + "/utils/network" );
 var logReader = require( __dirname + "/utils/logreader" );
 
+// These are the commands used by the app.
+// You can change these if you want to use any other firewall
+//
+// %% characters are needed for replacing content:
+// - For create and add commands %% are replaced with log type
+// - For ban commands first %% is replaced with log type, second is the ip/subnet to be banned,
+//   you must keep the locations as is.
+global.COMMANDS = {
+  CREATEIP : "ipset create %%-ip hash:ip", // create an ip list
+  ADDIP    : "iptables -I INPUT -m set --match-set %%-ip src -p ALL -j DROP", // add ip list to iptables
+  CREATENET: "ipset create %%-net hash:net", // create a subnet list
+  ADDNET   : "iptables -I INPUT -m set --match-set %%-net src -p ALL -j DROP", // add subnet list to iptables
+  BANIP    : "ipset add %%-ip %%",
+  BANNET   : "ipset add %%-net %%.0/24"
+};
+
 // If DEBUG is true, app will not ban any ip or subnets
 global.DEBUG = false;
 process.argv.forEach( function ( val ) {

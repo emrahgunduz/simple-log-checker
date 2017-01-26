@@ -12,10 +12,10 @@ Network.prototype.__createIpSetList = function ( from ) {
   global.logger( from, "Creating missing ipset tables for " + from );
 
   this.__wait   = true;
-  var commandA1 = "ipset create %%-ip hash:ip".localizer( from );
-  var commandA2 = "iptables -I INPUT -m set --match-set %%-ip src -p ALL -j DROP".localizer( from );
-  var commandB1 = "ipset create %%-net hash:net".localizer( from );
-  var commandB2 = "iptables -I INPUT -m set --match-set %%-net src -p ALL -j DROP".localizer( from );
+  var commandA1 = global.COMMANDS.CREATEIP.localizer( from );
+  var commandA2 = global.COMMANDS.ADDIP.localizer( from );
+  var commandB1 = global.COMMANDS.CREATENET.localizer( from );
+  var commandB2 = global.COMMANDS.ADDNET.localizer( from );
 
   var that = this;
 
@@ -65,7 +65,7 @@ Network.prototype.__createIpSetList = function ( from ) {
 
 Network.prototype.__ip = function ( ip, from ) {
   if ( global.DEBUG ) return;
-  var command = "ipset add %%-ip %%".localizer( from, ip );
+  var command = global.COMMANDS.BANIP.localizer( from, ip );
   this.__exec( command, function ( error, stdout, stderr ) {
     if ( error ) if ( !global.DEBUG ) throw ("Could not write to ipset table: " + command);
   } );
@@ -73,7 +73,7 @@ Network.prototype.__ip = function ( ip, from ) {
 
 Network.prototype.__net = function ( net, from ) {
   if ( global.DEBUG ) return;
-  var command = "ipset add %%-net %%.0/24".localizer( from, net );
+  var command = global.COMMANDS.BANNET.localizer( from, net );
   this.__exec( command, function ( error, stdout, stderr ) {
     if ( error ) if ( !global.DEBUG ) throw ("Could not write to ipset table: " + command);
   } );
