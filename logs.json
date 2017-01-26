@@ -1,0 +1,10 @@
+{
+  "exim": {
+    "file": "X:\\exim\\mainlog",
+    "attemptlimit": 3,
+    "iplimit": 2,
+    "lookfor": [
+      "535 Incorrect authentication data"
+    ]
+  }
+}
