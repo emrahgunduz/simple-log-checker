@@ -11,7 +11,7 @@ global.COMMANDS = {
   CREATENET    : "ipset create %%-net hash:net -exist", // create a subnet list
   ADDNET       : "iptables -I INPUT -m set --match-set %%-net src -p ALL -j DROP", // add subnet list to iptables
   BANIP        : "ipset add %%-ip %%",
-  BANNET       : "ipset add %%-net %%.0/24",
+  BANNET       : "ipset add %%-net %%.0/24"
 };
 
 var fs        = require( "fs" );
@@ -91,9 +91,10 @@ function exitHandler ( options, err ) {
     } );
   }
   setTimeout( function () {
-    if ( err ) console.log( err.stack );
+    global.logger( "EXIT", "Done" );
+    if ( err ) console.log( err );
     process.exit();
-  }, 250 );
+  }, 1000 );
 }
 
 process.on( "exit", exitHandler.bind( null, { cleanup: true } ) );

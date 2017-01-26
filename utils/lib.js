@@ -60,7 +60,7 @@ function dateFormat () {
 }
 
 var logger = function ( key, string ) {
-  console.log( ("%% - %% - %%").localizer( key.paddingLeft( "          " ), dateFormat(), string ) );
+  console.log( ("%% - %% - %%").localizer( key.paddingLeft( "               " ), dateFormat(), string ) );
 };
 
 var getLocalIps = function () {

@@ -67,7 +67,7 @@ Network.prototype.__ip = function ( ip, from ) {
   if ( global.DEBUG ) return;
   var command = global.COMMANDS.BANIP.localizer( from, ip );
   this.__exec( command, function ( error, stdout, stderr ) {
-    if ( error ) if ( !global.DEBUG ) throw ("Could not write to ipset table: " + command);
+    if ( error ) if ( !global.DEBUG ) global.logger( from, "ERROR: Could not write to ipset table: " + command );
   } );
 };
 
@@ -75,7 +75,7 @@ Network.prototype.__net = function ( net, from ) {
   if ( global.DEBUG ) return;
   var command = global.COMMANDS.BANNET.localizer( from, net );
   this.__exec( command, function ( error, stdout, stderr ) {
-    if ( error ) if ( !global.DEBUG ) throw ("Could not write to ipset table: " + command);
+    if ( error ) if ( !global.DEBUG ) global.logger( from, "ERROR: Could not write to ipset table: " + command );
   } );
 };
 
