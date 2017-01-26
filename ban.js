@@ -81,21 +81,21 @@ function Run () {
 
 Run();
 
-process.stdin.resume();//so the program will not close instantly
-
-function exitHandler ( options, err ) {
-  if ( options.cleanup ) {
-    global.logger( "EXIT", "Process stop received, terminating jobs, please wait..." );
-    readers.map( function ( reader ) {
-      reader.stop();
-    } );
-  }
-  setTimeout( function () {
-    if ( err ) console.log( err.stack );
-    process.exit();
-  }, 250 );
-}
-
-process.on( "exit", exitHandler.bind( null, { cleanup: true } ) );
-process.on( "SIGINT", exitHandler.bind( null, {} ) );
-process.on( "uncaughtException", exitHandler.bind( null, {} ) );
+//process.stdin.resume();//so the program will not close instantly
+//
+//function exitHandler ( options, err ) {
+//  if ( options.cleanup ) {
+//    global.logger( "EXIT", "Process stop received, terminating jobs, please wait..." );
+//    readers.map( function ( reader ) {
+//      reader.stop();
+//    } );
+//  }
+//  setTimeout( function () {
+//    if ( err ) console.log( err.stack );
+//    process.exit();
+//  }, 250 );
+//}
+//
+//process.on( "exit", exitHandler.bind( null, { cleanup: true } ) );
+//process.on( "SIGINT", exitHandler.bind( null, {} ) );
+//process.on( "uncaughtException", exitHandler.bind( null, {} ) );
