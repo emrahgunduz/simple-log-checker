@@ -53,3 +53,4 @@ Here is a simple safe ip list file (safe.json)
 ```
 Enter a single IP in each line. These IP addesses will not be banned on any flood or attempt.
 
+If you want to do a dry-run to see what is going on, simply run the application with "debug" argument. This will stop banning of ips and subnets but will continue to check logs and dump information on screen.
