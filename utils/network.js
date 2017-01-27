@@ -93,7 +93,7 @@ Network.prototype.ban = function ( ip, from, attemptLimit, ipLimit ) {
     if ( this.__netList.hasOwnProperty( net ) && this.__netList[ net ].b ) {
       // This IP is banned in net level already
       this.__ipList[ ip ].b = true;
-      // if ( global.DEBUG ) global.logger( from, "IP %% is already banned on net level".localizer( ip.paddingLeft( "               " ) ) );
+      if ( global.DEBUG ) global.logger( from, "IP %% is already banned on net level".localizer( ip.paddingLeft( "               " ) ) );
     } else {
       // Increasing denied counter for ip
       this.__ipList[ ip ].c++;
@@ -128,39 +128,52 @@ Network.prototype.ban = function ( ip, from, attemptLimit, ipLimit ) {
   }
 };
 
-Network.prototype.ip = function ( ip, from, attemptLimit, ipLimit ) {
-  // Do not check for safe ips
-  if ( global.SAFEIPS.contains( ip ) ) return;
-
-  if ( !this.__waitingIpList.hasOwnProperty( from ) )
-    this.__waitingIpList[ from ] = [];
-
-  // Wait for ipset lists creation, keep ips accessible
-  if ( this.__wait ) {
-    this.__waitingIpList[ from ].push( { ip: ip, from: from, attemptLimit: attemptLimit, ipLimit: ipLimit } );
-    return;
-  }
-
-  // If ipset lists are not set, create them
-  if ( !global.DEBUG ) {
-    if ( !this.__fromList.contains( from ) ) {
-      this.__createIpSetList( from );
-      return;
-    }
-  } else {
-    if ( !this.__waitingIpList.hasOwnProperty( from ) ) this.__waitingIpList[ from ] = [];
-  }
-
-  // If there are waiting ips ban them first
-  if ( this.__waitingIpList[ from ].length ) {
+Network.prototype.ip = function ( ips, from, attemptLimit, ipLimit ) {
+  // If there are waiting ips check them too
+  if ( !this.__wait && this.__waitingIpList.hasOwnProperty( from ) ) {
     for ( var m = 0; m < this.__waitingIpList[ from ].length; m++ ) {
       var current = this.__waitingIpList[ from ][ m ];
       this.ban( current.ip, current.from, current.attemptLimit, current.ipLimit );
     }
-    this.__waitingIpList[ from ] = [];
+    delete this.__waitingIpList[ from ];
   }
 
-  this.ban( ip, from, attemptLimit, ipLimit );
+  // Remove safe ips from found list
+  var i = ips.length;
+  while ( i-- ) {
+    if ( global.SAFEIPS.contains( ips[ i ] ) ) ips.splice( i, 1 );
+  }
+
+  // No ips left?
+  if ( !ips.length ) return;
+
+  {
+    i = ips.length;
+    while ( i-- ) {
+      var ip = ips[ i ];
+
+      if ( !this.__waitingIpList.hasOwnProperty( from ) )
+        this.__waitingIpList[ from ] = [];
+
+      // Wait for ipset lists creation, keep ips accessible
+      if ( this.__wait ) {
+        this.__waitingIpList[ from ].push( { ip: ip, from: from, attemptLimit: attemptLimit, ipLimit: ipLimit } );
+        continue;
+      }
+
+      // If ipset lists are not set, create them
+      if ( !global.DEBUG ) {
+        if ( !this.__fromList.contains( from ) ) {
+          this.__createIpSetList( from );
+          continue;
+        }
+      } else {
+        if ( !this.__waitingIpList.hasOwnProperty( from ) ) this.__waitingIpList[ from ] = [];
+      }
+
+      this.ban( ip, from, attemptLimit, ipLimit );
+    }
+  }
 };
 
 module.exports = Network;

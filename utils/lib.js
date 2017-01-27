@@ -1,10 +1,11 @@
 Array.prototype.contains = function ( obj ) {
   var i = this.length;
   while ( i-- ) {
-    if ( this[ i ] === obj ) {
+    if ( obj.contains( this[ i ] ) ) {
       return true;
     }
   }
+
   return false;
 };
 
@@ -39,10 +40,10 @@ String.prototype.paddingLeft = function ( paddingString ) {
   return String( paddingString + this ).slice( -paddingString.length );
 };
 
-var ipRegexPattern  = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/;
-String.prototype.IP = function () {
+var ipRegexPattern   = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
+String.prototype.IPS = function () {
   var t = this.match( ipRegexPattern );
-  return (!!t && !!t[ 0 ] ? t[ 0 ] : null);
+  return (!!t && t.length ? t : []);
 };
 
 function dateFormat () {

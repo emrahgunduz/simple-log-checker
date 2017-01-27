@@ -32,8 +32,10 @@ LogReader.prototype.__startReading = function () {
       for ( var i = 0; i < lineArray.length; i++ ) {
         var line = lineArray[ i ];
         if ( line.contains( that.__information.lookfor ) ) {
-          if ( global.DEBUG ) global.logger( that.__key, "DEBUG : Found IP " + line.IP() );
-          that.__network.ip( line.IP(), that.__key, that.__information.attemptlimit, that.__information.iplimit );
+          var ips = line.IPS();
+          if ( ips.length ) {
+            that.__network.ip( ips, that.__key, that.__information.attemptlimit, that.__information.iplimit );
+          }
         }
       }
 

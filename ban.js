@@ -56,7 +56,7 @@ function Run () {
     var safeIpList = fs.readFileSync( __dirname + "/safe.json", "utf8" );
     var ips        = JSON.parse( safeIpList );
     global.SAFEIPS = global.SAFEIPS.concat( ips );
-    if ( global.DEBUG ) console.log( "Defined Safe IPs are:", global.SAFEIPS );
+    if ( global.DEBUG ) console.log( "Defined Safe IPs are:", global.SAFEIPS.join( ", " ), "\n\n" );
   } catch ( e ) {
     console.log( "There is no safe ip list -----------------------------------------------" );
     console.log( " Your local ips are safe, we are marking them." );

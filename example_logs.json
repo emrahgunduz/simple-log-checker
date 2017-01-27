@@ -1,6 +1,6 @@
 {
   "exim": {
-    "file": "/var/log/exim/mainlog",
+    "file": "/var/log/exim/rejectlog",
     "attemptlimit": 3,
     "iplimit": 20,
     "lookfor": [
