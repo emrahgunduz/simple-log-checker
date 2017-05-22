@@ -24,13 +24,15 @@ Here is a simple configuration file (`logs.json`)
       "denied"
     ]
   },
-  "mywebapp": {
-    "file": "/var/log/httpd/somedomain.com.log",
-    "attemptlimit": 1,
+  "httpd": {
+    "file": "/var/log/httpd/domains/*.log",
+    "attemptlimit": 50,
     "iplimit": 10,
     "lookfor": [
+      "wp-login.php",
+      "xmlrpc.php",
       "wrong password",
-      "wrong username and password"
+      "my custom error printed to log"
     ]
   }
 }
@@ -38,7 +40,7 @@ Here is a simple configuration file (`logs.json`)
 So, what is what in here?
 
 * Write the name of the app, or what you want to call it as the key.
-* `file` Name of the log file.
+* `file` Name of the log file (or a pattern to much multiple files at once)
 * `attemptlimit` Limit for any ip. If limit is exceeded, ip gets banned
 * `iplimit` This is a limit for subnet banning. If same subnet ip list gets bigger than this, subnet is banned (value of 0 or smaller disables banning).
 * `lookfor` An array of strings to search for. On every new log file, if any is found, a ban is called (value of 0 or smaller disables banning).
