@@ -15,5 +15,14 @@
     "lookfor": [
       "denied"
     ]
+  },
+  "httpd": {
+    "file": "/var/log/httpd/domains/*.log",
+    "attemptlimit": 50,
+    "iplimit": 10,
+    "lookfor": [
+      "wp-login.php",
+      "xmlrpc.php"
+    ]
   }
 }

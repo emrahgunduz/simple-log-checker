@@ -32,14 +32,15 @@ process.argv.forEach( function ( val ) {
 } );
 
 var readers = [];
-function Run () {
+
+(function () {
   var content;
 
   try {
     var simpleban = fs.readFileSync( __dirname + "/info", "utf8" );
     console.log( simpleban );
   } catch ( e ) {
-    // not important
+    // Not important
   }
 
   try {
@@ -64,27 +65,43 @@ function Run () {
     console.log( " It would be nice if you added your own ip to system." );
     console.log( " For more information, look at the documentation for how to create one." );
     console.log( "------------------------------------------------------------------------" );
+    process.exit( 1 );
   }
 
-  var networker = new network();
-  var settings  = JSON.parse( content );
+  var glob         = require( "glob" );
+  var networker    = new network();
+  var pushToReader = function ( item, key ) {
+    glob( item.file, function ( err, files ) {
+      if ( err ) {
+        global.logger( key, "While processing " + item.file + " an error occured." );
+        console.log( err );
+        return;
+      }
+
+      if ( !files.length ) {
+        global.logger( key, "No files found regarding \"" + item.file + "\". Please check that pattern is ok." );
+        return;
+      }
+
+      for ( var m = 0; m < files.length; m++ ) {
+        item.file = files[ m ];
+        if ( fs.lstatSync( item.file ).isFile() ) {
+          readers.push( new logReader( key, item, networker ) );
+        }
+      }
+    } );
+  };
+
+  var settings = JSON.parse( content );
   var key;
   for ( key in settings ) {
     if ( settings.hasOwnProperty( key ) ) {
-      if ( !fs.existsSync( settings[ key ].file ) ) {
-        console.log( settings[ key ].file + " does not exist" );
-        process.exit( 1 );
-      }
+      pushToReader( settings[ key ], key );
     }
   }
-  for ( key in settings ) {
-    if ( settings.hasOwnProperty( key ) ) readers.push( new logReader( key, settings[ key ], networker ) );
-  }
-}
+})();
 
-Run();
-
-process.stdin.resume();//so the program will not close instantly
+process.stdin.resume(); // So the program will not close instantly
 
 function exitHandler ( options, err ) {
   if ( options.cleanup ) {

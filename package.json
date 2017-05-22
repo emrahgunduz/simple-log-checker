@@ -4,5 +4,8 @@
   "description": "Simple Ban Maanger - Bans ips by reading log files, uses iptables.",
   "main": "ban.js",
   "author": "Emrah Gunduz",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "glob": "^7.1.2"
+  }
 }
