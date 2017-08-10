@@ -25,7 +25,7 @@ var LogReader = require( __dirname + "/utils/logreader" );
 // If DEBUG is true, app will not ban any ip or subnets
 global.DEBUG = false;
 process.argv.forEach( function ( val ) {
-  if ( val.toLowerCase() == "debug" ) {
+  if ( val.toLowerCase() === "debug" ) {
     console.log( "\n-- Debug is on!" );
     global.DEBUG = true;
   }
@@ -33,15 +33,17 @@ process.argv.forEach( function ( val ) {
 
 var readers = [];
 
-(function () {
-  var content;
-
+function trySimpleBan () {
   try {
     var simpleban = fs.readFileSync( __dirname + "/info", "utf8" );
     console.log( simpleban );
   } catch ( e ) {
     // Not important
   }
+}
+
+function tryReadContent () {
+  var content;
 
   try {
     content = fs.readFileSync( __dirname + "/logs.json", "utf8" );
@@ -53,6 +55,10 @@ var readers = [];
     process.exit( 1 );
   }
 
+  return content;
+}
+
+function tryGlobalSafeList () {
   try {
     var safeIpList = fs.readFileSync( __dirname + "/safe.json", "utf8" );
     var ips        = JSON.parse( safeIpList );
@@ -69,6 +75,15 @@ var readers = [];
     console.log( "------------------------------------------------------------------------" );
     process.exit( 1 );
   }
+}
+
+(function () {
+  var content;
+
+  trySimpleBan();
+  tryGlobalSafeList();
+
+  content = tryReadContent();
 
   var glob         = require( "glob" );
   var networker    = new Network();

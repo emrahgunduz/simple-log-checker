@@ -72,12 +72,14 @@ var getLocalIps = function () {
   var ips    = [];
 
   for ( var ifname in ifaces ) {
-    if ( ifaces.hasOwnProperty( ifname ) ) {
-      var arr = ifaces[ ifname ];
-      for ( var m = 0; m < arr.length; m++ ) {
-        if ( arr[ m ].family.toLowerCase() === "ipv4" ) {
-          ips.push( arr[ m ].address );
-        }
+    if ( !ifaces.hasOwnProperty( ifname ) ) {
+      continue;
+    }
+
+    var arr = ifaces.hasOwnProperty( ifname ) ? ifaces[ ifname ] : [];
+    for ( var m = 0; m < arr.length; m++ ) {
+      if ( arr[ m ].family.toLowerCase() === "ipv4" ) {
+        ips.push( arr[ m ].address );
       }
     }
   }
