@@ -3,7 +3,7 @@ function Network () {
   this.__ipList   = {};
   this.__netList  = {};
 
-  this.__exec          = require( "child_process" ).exec;
+  this.__exec          = require( "child_process" ).execSync;
   this.__wait          = false;
   this.__waitingIpList = {};
 }
@@ -11,7 +11,8 @@ function Network () {
 Network.prototype.__createIpSetList = function ( from ) {
   global.logger( from, "Creating missing ipset tables for " + from );
 
-  this.__wait   = true;
+  this.__wait = true;
+
   var commandA1 = global.COMMANDS.CREATEIP.localizer( from );
   var commandA2 = global.COMMANDS.ADDIP.localizer( from );
   var commandB1 = global.COMMANDS.CREATENET.localizer( from );
@@ -19,72 +20,43 @@ Network.prototype.__createIpSetList = function ( from ) {
 
   var that = this;
 
-  var final = function () {
-    that.__fromList.push( from );
-    that.__wait = false;
-  };
+  var commands = [
+    global.COMMANDS.CREATEIP.localizer( from ),
+    global.COMMANDS.ADDIP.localizer( from ),
+    global.COMMANDS.CREATENET.localizer( from ),
+    global.COMMANDS.ADDNET.localizer( from )
+  ];
 
-  var four = function ( call ) {
-    that.__exec( commandB2, function ( error, stdout, stderr ) {
+  for ( var m = 0; m < commands.length; m++ ) {
+    that.__exec( commands[ m ], function ( error, stdout, stderr ) {
       if ( error ) if ( !global.DEBUG ) throw ("Could not write ipset table: " + commandB2);
-      call();
     } );
-  };
+  }
 
-  var three = function ( call ) {
-    that.__exec( commandB1, function ( error, stdout, stderr ) {
-      if ( error ) if ( !global.DEBUG ) throw ("Could not write ipset table: " + commandB1);
-      call();
-    } );
-  };
+  that.__fromList.push( from );
+  that.__wait = false;
+};
 
-  var two = function ( call ) {
-    that.__exec( commandA2, function ( error, stdout, stderr ) {
-      if ( error ) if ( !global.DEBUG ) throw ("Could not write ipset table: " + commandA2);
-      call();
-    } );
-  };
-
-  var one = function ( call ) {
-    that.__exec( commandA1, function ( error, stdout, stderr ) {
-      if ( error ) if ( !global.DEBUG ) throw ("Could not write ipset table: " + commandA1);
-      call();
-    } );
-  };
-
-  one( function () {
-    two( function () {
-      three( function () {
-        four( function () {
-          final();
-        } );
-      } );
-    } );
+Network.prototype.__runCommand = function ( command ) {
+  this.__exec( command, function ( error, stdout, stderr ) {
+    if ( error ) {
+      if ( !global.DEBUG ) {
+        global.logger( from, "ERROR: Could not write to ipset table: " + command );
+      }
+    }
   } );
 };
 
 Network.prototype.__ip = function ( ip, from ) {
   if ( global.DEBUG ) return;
   var command = global.COMMANDS.BANIP.localizer( from, ip );
-  this.__exec( command, function ( error, stdout, stderr ) {
-    if ( error ) {
-      if ( !global.DEBUG ) {
-        global.logger( from, "ERROR: Could not write to ipset table: " + command );
-      }
-    }
-  } );
+  this.__runCommand( command );
 };
 
 Network.prototype.__net = function ( net, from ) {
   if ( global.DEBUG ) return;
   var command = global.COMMANDS.BANNET.localizer( from, net );
-  this.__exec( command, function ( error, stdout, stderr ) {
-    if ( error ) {
-      if ( !global.DEBUG ) {
-        global.logger( from, "ERROR: Could not write to ipset table: " + command );
-      }
-    }
-  } );
+  this.__runCommand( command );
 };
 
 Network.prototype.destroy = function ( from ) {
