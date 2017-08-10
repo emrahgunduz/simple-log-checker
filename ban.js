@@ -56,7 +56,9 @@ var readers = [];
     var safeIpList = fs.readFileSync( __dirname + "/safe.json", "utf8" );
     var ips        = JSON.parse( safeIpList );
     global.SAFEIPS = global.SAFEIPS.concat( ips );
-    if ( global.DEBUG ) console.log( "Defined Safe IPs are:", global.SAFEIPS.join( ", " ), "\n\n" );
+    if ( global.DEBUG ) {
+      console.log( "Defined Safe IPs are:", global.SAFEIPS.join( ", " ), "\n\n" );
+    }
   } catch ( e ) {
     console.log( "There is no safe ip list -----------------------------------------------" );
     console.log( " Your local ips are safe, we are marking them." );
@@ -64,6 +66,7 @@ var readers = [];
     console.log( " It would be nice if you added your own ip to system." );
     console.log( " For more information, look at the documentation for how to create one." );
     console.log( "------------------------------------------------------------------------" );
+    console.log( e );
     process.exit( 1 );
   }
 
