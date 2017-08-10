@@ -52,14 +52,16 @@ function dateFormat () {
   var date = new Date();
 
   var months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
-  var cDate  = date.getDate().toString().paddingLeft( "  " );
-  var cMonth = date.getMonth();
-  var cYear  = date.getFullYear();
-  var cMin   = date.getMinutes().toString().paddingLeft( "00" );
-  var cHr    = date.getHours().toString().paddingLeft( "00" );
-  var cSc    = date.getSeconds().toString().paddingLeft( "00" );
+  var obj    = [
+    date.getMonth(),
+    date.getDate().toString().paddingLeft( "  " ),
+    date.getFullYear(),
+    date.getHours().toString().paddingLeft( "00" ),
+    date.getMinutes().toString().paddingLeft( "00" ),
+    date.getSeconds().toString().paddingLeft( "00" )
+  ];
 
-  return months[ cMonth ] + " " + cDate + " " + cYear + " - " + cHr + ":" + cMin + ":" + cSc;
+  return months[ obj[ 0 ] ] + " " + obj[ 1 ] + " " + obj[ 2 ] + " - " + obj[ 3 ] + ":" + obj[ 4 ] + ":" + obj[ 5 ];
 }
 
 var logger = function ( key, string ) {
