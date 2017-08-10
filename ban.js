@@ -18,6 +18,7 @@ global.COMMANDS = {
 };
 
 var fs        = require( "fs" );
+var Lib       = require( __dirname + "/utils/lib" );
 var Network   = require( __dirname + "/utils/network" );
 var LogReader = require( __dirname + "/utils/logreader" );
 
@@ -66,7 +67,6 @@ var readers = [];
     console.log( " It would be nice if you added your own ip to system." );
     console.log( " For more information, look at the documentation for how to create one." );
     console.log( "------------------------------------------------------------------------" );
-    console.log( e );
     process.exit( 1 );
   }
 
