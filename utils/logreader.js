@@ -23,6 +23,16 @@ LogReader.prototype.__startReading = function () {
 
   var that = this;
 
+  var readFile = function () {
+    if ( that.__stopped ) return;
+    var stats = fs.fstatSync( file );
+    if ( stats.size < readbytes + 1 ) {
+      setTimeout( readFile, 250 );
+    } else {
+      fs.read( file, new Buffer( bite_size ), 0, bite_size, readbytes, processBuffer );
+    }
+  };
+
   var processBuffer = function ( err, bytecount, buff ) {
     lastLineFeed = buff.toString( "utf-8", 0, bytecount ).lastIndexOf( "\n" );
 
@@ -45,16 +55,6 @@ LogReader.prototype.__startReading = function () {
     }
 
     process.nextTick( readFile );
-  };
-
-  var readFile = function () {
-    if ( that.__stopped ) return;
-    var stats = fs.fstatSync( file );
-    if ( stats.size < readbytes + 1 ) {
-      setTimeout( readFile, 250 );
-    } else {
-      fs.read( file, new Buffer( bite_size ), 0, bite_size, readbytes, processBuffer );
-    }
   };
 
   try {
