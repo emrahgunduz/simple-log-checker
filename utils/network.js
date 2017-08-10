@@ -12,7 +12,7 @@ Network.prototype.__createIpSetList = function ( from ) {
   global.logger( from, "Creating missing ipset tables for " + from );
 
   this.__wait = true;
-  var that = this;
+  var that    = this;
 
   var commands = [
     global.COMMANDS.CREATEIP.localizer( from ),
@@ -22,8 +22,8 @@ Network.prototype.__createIpSetList = function ( from ) {
   ];
 
   for ( var m = 0; m < commands.length; m++ ) {
-    that.__exec( commands[ m ], function ( error, stdout, stderr ) {
-      if ( error ) if ( !global.DEBUG ) throw ("Could not write ipset table: " + commandB2);
+    that.__exec( commands[ m ], function ( error ) {
+      if ( error ) if ( !global.DEBUG ) throw ("Could not write to ipset table.");
     } );
   }
 
@@ -31,8 +31,8 @@ Network.prototype.__createIpSetList = function ( from ) {
   that.__wait = false;
 };
 
-Network.prototype.__runCommand = function ( command ) {
-  this.__exec( command, function ( error, stdout, stderr ) {
+Network.prototype.__runCommand = function ( command, from ) {
+  this.__exec( command, function ( error ) {
     if ( error ) {
       if ( !global.DEBUG ) {
         global.logger( from, "ERROR: Could not write to ipset table: " + command );
@@ -44,13 +44,58 @@ Network.prototype.__runCommand = function ( command ) {
 Network.prototype.__ip = function ( ip, from ) {
   if ( global.DEBUG ) return;
   var command = global.COMMANDS.BANIP.localizer( from, ip );
-  this.__runCommand( command );
+  this.__runCommand( command, from );
 };
 
 Network.prototype.__net = function ( net, from ) {
   if ( global.DEBUG ) return;
   var command = global.COMMANDS.BANNET.localizer( from, net );
-  this.__runCommand( command );
+  this.__runCommand( command, from );
+};
+
+Network.prototype.__banIpList = function ( ip, net, from, attemptLimit ) {
+  if ( !this.__ipList.hasOwnProperty( ip ) ) {
+    this.__ipList[ ip ] = { c: 0, b: false };
+  }
+
+  if ( this.__netList.hasOwnProperty( net ) && this.__netList[ net ].b ) {
+    // This IP is banned in net level already
+    this.__ipList[ ip ].b = true;
+    if ( global.DEBUG ) {
+      global.logger( from, "IP %% is already banned on net level".localizer( ip.paddingLeft( "               " ) ) );
+    }
+
+    return;
+  }
+
+  // Increasing denied counter for ip
+  this.__ipList[ ip ].c++;
+
+  if ( attemptLimit > 0 && !this.__ipList[ ip ].b && this.__ipList[ ip ].c >= attemptLimit ) {
+    global.logger( from, "IP BAN  - %% : %% denies".localizer( ip.paddingLeft( "               " ), this.__ipList[ ip ].c.toString().paddingLeft( "   " ) ) );
+
+    this.__ipList[ ip ].b = true;
+    this.__ip( ip, from );
+  }
+};
+
+Network.prototype.__banNetList = function ( ip, net, from, ipLimit ) {
+  // This is the first time we are seeing this address
+  if ( !this.__netList.hasOwnProperty( net ) ) {
+    this.__netList[ net ] = { c: [], b: false };
+  }
+
+  // Add address to list if needed
+  if ( !this.__netList[ net ].c.contains( ip ) ) {
+    this.__netList[ net ].c.push( ip );
+  }
+
+  if ( ipLimit > 0 && !this.__netList[ net ].b && this.__netList[ net ].c.length >= ipLimit ) {
+    global.logger( from, "NET BAN - %%.0/24 : %% ip adresses".localizer( net.paddingLeft( "          " ), this.__netList[ net ].c.length.toString().paddingLeft( "   " ) ) );
+
+    this.__netList[ net ].b = true;
+    this.__net( net, from );
+  }
 };
 
 Network.prototype.destroy = function ( from ) {
@@ -63,45 +108,8 @@ Network.prototype.ban = function ( ip, from, attemptLimit, ipLimit ) {
   subnets.pop();
   var net = subnets.join( "." );
 
-  if ( this.__ipList.hasOwnProperty( ip ) ) {
-    if ( this.__netList.hasOwnProperty( net ) && this.__netList[ net ].b ) {
-      // This IP is banned in net level already
-      this.__ipList[ ip ].b = true;
-      if ( global.DEBUG ) {
-        global.logger( from, "IP %% is already banned on net level".localizer( ip.paddingLeft( "               " ) ) );
-      }
-    } else {
-      // Increasing denied counter for ip
-      this.__ipList[ ip ].c++;
-
-      if ( attemptLimit > 0 && !this.__ipList[ ip ].b && this.__ipList[ ip ].c >= attemptLimit ) {
-        global.logger( from, "IP BAN  - %% : %% denies".localizer( ip.paddingLeft( "               " ), this.__ipList[ ip ].c.toString().paddingLeft( "   " ) ) );
-
-        this.__ipList[ ip ].b = true;
-        this.__ip( ip, from );
-      }
-    }
-  } else {
-    // First time seen
-    this.__ipList[ ip ] = { c: 1, b: false };
-  }
-
-  if ( this.__netList.hasOwnProperty( net ) ) {
-    if ( !this.__netList[ net ].c.contains( ip ) ) {
-      // Adding ip to network list
-      this.__netList[ net ].c.push( ip );
-
-      if ( ipLimit > 0 && !this.__netList[ net ].b && this.__netList[ net ].c.length >= ipLimit ) {
-        global.logger( from, "NET BAN - %%.0/24 : %% ip adresses".localizer( net.paddingLeft( "          " ), this.__netList[ net ].c.length.toString().paddingLeft( "   " ) ) );
-
-        this.__netList[ net ].b = true;
-        this.__net( net, from );
-      }
-    }
-  } else {
-    // First time seen
-    this.__netList[ net ] = { c: [ ip ], b: false };
-  }
+  this.__banIpList( ip, net, from, attemptLimit );
+  this.__banNetList( ip, net, from, ipLimit );
 };
 
 Network.prototype.ip = function ( ips, from, attemptLimit, ipLimit ) {
