@@ -58,16 +58,20 @@ Network.prototype.__createIpSetList = function ( from ) {
         four( function () {
           final();
         } );
-      } )
-    } )
-  } )
+      } );
+    } );
+  } );
 };
 
 Network.prototype.__ip = function ( ip, from ) {
   if ( global.DEBUG ) return;
   var command = global.COMMANDS.BANIP.localizer( from, ip );
   this.__exec( command, function ( error, stdout, stderr ) {
-    if ( error ) if ( !global.DEBUG ) global.logger( from, "ERROR: Could not write to ipset table: " + command );
+    if ( error ) {
+      if ( !global.DEBUG ) {
+        global.logger( from, "ERROR: Could not write to ipset table: " + command );
+      }
+    }
   } );
 };
 
@@ -75,7 +79,11 @@ Network.prototype.__net = function ( net, from ) {
   if ( global.DEBUG ) return;
   var command = global.COMMANDS.BANNET.localizer( from, net );
   this.__exec( command, function ( error, stdout, stderr ) {
-    if ( error ) if ( !global.DEBUG ) global.logger( from, "ERROR: Could not write to ipset table: " + command );
+    if ( error ) {
+      if ( !global.DEBUG ) {
+        global.logger( from, "ERROR: Could not write to ipset table: " + command );
+      }
+    }
   } );
 };
 
@@ -93,7 +101,9 @@ Network.prototype.ban = function ( ip, from, attemptLimit, ipLimit ) {
     if ( this.__netList.hasOwnProperty( net ) && this.__netList[ net ].b ) {
       // This IP is banned in net level already
       this.__ipList[ ip ].b = true;
-      if ( global.DEBUG ) global.logger( from, "IP %% is already banned on net level".localizer( ip.paddingLeft( "               " ) ) );
+      if ( global.DEBUG ) {
+        global.logger( from, "IP %% is already banned on net level".localizer( ip.paddingLeft( "               " ) ) );
+      }
     } else {
       // Increasing denied counter for ip
       this.__ipList[ ip ].c++;
@@ -145,15 +155,18 @@ Network.prototype.ip = function ( ips, from, attemptLimit, ipLimit ) {
   }
 
   // No ips left?
-  if ( !ips.length ) return;
+  if ( !ips.length ) {
+    return;
+  }
 
   {
     i = ips.length;
     while ( i-- ) {
       var ip = ips[ i ];
 
-      if ( !this.__waitingIpList.hasOwnProperty( from ) )
+      if ( !this.__waitingIpList.hasOwnProperty( from ) ) {
         this.__waitingIpList[ from ] = [];
+      }
 
       // Wait for ipset lists creation, keep ips accessible
       if ( this.__wait ) {
@@ -168,7 +181,9 @@ Network.prototype.ip = function ( ips, from, attemptLimit, ipLimit ) {
           continue;
         }
       } else {
-        if ( !this.__waitingIpList.hasOwnProperty( from ) ) this.__waitingIpList[ from ] = [];
+        if ( !this.__waitingIpList.hasOwnProperty( from ) ) {
+          this.__waitingIpList[ from ] = [];
+        }
       }
 
       this.ban( ip, from, attemptLimit, ipLimit );

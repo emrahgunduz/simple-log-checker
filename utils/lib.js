@@ -9,7 +9,7 @@ Array.prototype.contains = function ( obj ) {
   return false;
 };
 
-String.prototype.localizer   = function () {
+String.prototype.localizer = function () {
   function safeRegexEscape ( str ) {
     return str.replace( /([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1" );
   }
@@ -21,7 +21,8 @@ String.prototype.localizer   = function () {
   }
   return current;
 };
-String.prototype.contains    = function ( obj, doNotUseCase ) {
+
+String.prototype.contains = function ( obj, doNotUseCase ) {
   if ( obj instanceof Array ) {
     var contains = false;
     var that     = doNotUseCase ? this.toLowerCase() : this;
@@ -36,6 +37,7 @@ String.prototype.contains    = function ( obj, doNotUseCase ) {
   else
     return this.indexOf( obj ) >= 0;
 };
+
 String.prototype.paddingLeft = function ( paddingString ) {
   return String( paddingString + this ).slice( -paddingString.length );
 };
@@ -49,15 +51,15 @@ String.prototype.IPS = function () {
 function dateFormat () {
   var date = new Date();
 
-  var months     = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
-  var curr_date  = date.getDate().toString().paddingLeft( "  " );
-  var curr_month = date.getMonth();
-  var curr_year  = date.getFullYear();
-  var curr_min   = date.getMinutes().toString().paddingLeft( "00" );
-  var curr_hr    = date.getHours().toString().paddingLeft( "00" );
-  var curr_sc    = date.getSeconds().toString().paddingLeft( "00" );
+  var months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+  var cDate  = date.getDate().toString().paddingLeft( "  " );
+  var cMonth = date.getMonth();
+  var cYear  = date.getFullYear();
+  var cMin   = date.getMinutes().toString().paddingLeft( "00" );
+  var cHr    = date.getHours().toString().paddingLeft( "00" );
+  var cSc    = date.getSeconds().toString().paddingLeft( "00" );
 
-  return months[ curr_month ] + " " + curr_date + " " + curr_year + " - " + curr_hr + ":" + curr_min + ":" + curr_sc;
+  return months[ cMonth ] + " " + cDate + " " + cYear + " - " + cHr + ":" + cMin + ":" + cSc;
 }
 
 var logger = function ( key, string ) {
@@ -73,7 +75,9 @@ var getLocalIps = function () {
     if ( ifaces.hasOwnProperty( ifname ) ) {
       var arr = ifaces[ ifname ];
       for ( var m = 0; m < arr.length; m++ ) {
-        if ( arr[ m ].family.toLowerCase() == "ipv4" ) ips.push( arr[ m ].address );
+        if ( arr[ m ].family.toLowerCase() === "ipv4" ) {
+          ips.push( arr[ m ].address );
+        }
       }
     }
   }

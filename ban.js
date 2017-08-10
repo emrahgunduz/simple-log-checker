@@ -18,9 +18,8 @@ global.COMMANDS = {
 };
 
 var fs        = require( "fs" );
-var lib       = require( __dirname + "/utils/lib" );
-var network   = require( __dirname + "/utils/network" );
-var logReader = require( __dirname + "/utils/logreader" );
+var Network   = require( __dirname + "/utils/network" );
+var LogReader = require( __dirname + "/utils/logreader" );
 
 // If DEBUG is true, app will not ban any ip or subnets
 global.DEBUG = false;
@@ -69,7 +68,7 @@ var readers = [];
   }
 
   var glob         = require( "glob" );
-  var networker    = new network();
+  var networker    = new Network();
   var pushToReader = function ( item, key ) {
     glob( item.file, function ( err, files ) {
       if ( err ) {
@@ -86,7 +85,7 @@ var readers = [];
       for ( var m = 0; m < files.length; m++ ) {
         item.file = files[ m ];
         if ( fs.lstatSync( item.file ).isFile() ) {
-          readers.push( new logReader( key, item, networker ) );
+          readers.push( new LogReader( key, item, networker ) );
         }
       }
     } );
@@ -112,7 +111,9 @@ function exitHandler ( options, err ) {
   }
   setTimeout( function () {
     global.logger( "EXIT", "Done" );
-    if ( err ) console.log( err );
+    if ( err ) {
+      console.log( err );
+    }
     process.exit();
   }, 1000 );
 }
