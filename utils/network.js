@@ -12,12 +12,6 @@ Network.prototype.__createIpSetList = function ( from ) {
   global.logger( from, "Creating missing ipset tables for " + from );
 
   this.__wait = true;
-
-  var commandA1 = global.COMMANDS.CREATEIP.localizer( from );
-  var commandA2 = global.COMMANDS.ADDIP.localizer( from );
-  var commandB1 = global.COMMANDS.CREATENET.localizer( from );
-  var commandB2 = global.COMMANDS.ADDNET.localizer( from );
-
   var that = this;
 
   var commands = [
