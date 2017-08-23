@@ -99,8 +99,15 @@ Network.prototype.__banNetList = function ( ip, net, from, ipLimit ) {
 };
 
 Network.prototype.destroy = function ( from ) {
-  this.__exec( global.COMMANDS.DESTROYIP.localizer( from, from ), { timeout: 1000 } );
-  this.__exec( global.COMMANDS.DESTROYNET.localizer( from, from ), { timeout: 1000 } );
+  if ( this.__fromList.contains( from ) ) {
+    this.__exec( global.COMMANDS.DESTROYIP.localizer( from, from ), function ( error ) {
+      if ( error ) if ( !global.DEBUG ) throw ("Could not destroy ipset ip table for " + from);
+    } );
+
+    this.__exec( global.COMMANDS.DESTROYNET.localizer( from, from ), function ( error ) {
+      if ( error ) if ( !global.DEBUG ) throw ("Could not destroy ipset net table for " + from);
+    } );
+  }
 };
 
 Network.prototype.ban = function ( ip, from, attemptLimit, ipLimit ) {
