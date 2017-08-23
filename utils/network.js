@@ -148,18 +148,6 @@ Network.prototype.ip = function ( ips, from, attemptLimit, ipLimit ) {
         continue;
       }
 
-      // If ipset lists are not set, create them
-      if ( !global.DEBUG ) {
-        if ( !this.__fromList.contains( from ) ) {
-          this.__createIpSetList( from );
-          continue;
-        }
-      } else {
-        if ( !this.__waitingIpList.hasOwnProperty( from ) ) {
-          this.__waitingIpList[ from ] = [];
-        }
-      }
-
       this.ban( ip, from, attemptLimit, ipLimit );
     }
   }
