@@ -22,7 +22,6 @@ Network.prototype.__createIpSetList = function ( from ) {
   ];
 
   for ( var m = 0; m < commands.length; m++ ) {
-    global.logger( from, "Running " + commands[ m ] );
     that.__exec( commands[ m ], function ( error ) {
       if ( error ) {
         if ( !global.DEBUG ) {
