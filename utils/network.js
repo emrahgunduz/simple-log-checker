@@ -23,7 +23,11 @@ Network.prototype.__createIpSetList = function ( from ) {
 
   for ( var m = 0; m < commands.length; m++ ) {
     that.__exec( commands[ m ], function ( error ) {
-      if ( error ) if ( !global.DEBUG ) throw ("Could not write to ipset table.");
+      if ( error ) {
+        if ( !global.DEBUG ) {
+          global.logger( from, "ERROR: Could not write to ipset table" );
+        }
+      }
     } );
   }
 
@@ -100,13 +104,8 @@ Network.prototype.__banNetList = function ( ip, net, from, ipLimit ) {
 
 Network.prototype.destroy = function ( from ) {
   if ( this.__fromList.contains( from ) ) {
-    this.__exec( global.COMMANDS.DESTROYIP.localizer( from, from ), function ( error ) {
-      if ( error ) if ( !global.DEBUG ) throw ("Could not destroy ipset ip table for " + from);
-    } );
-
-    this.__exec( global.COMMANDS.DESTROYNET.localizer( from, from ), function ( error ) {
-      if ( error ) if ( !global.DEBUG ) throw ("Could not destroy ipset net table for " + from);
-    } );
+    this.__exec( global.COMMANDS.DESTROYIP.localizer( from, from ) );
+    this.__exec( global.COMMANDS.DESTROYNET.localizer( from, from ) );
   }
 };
 
