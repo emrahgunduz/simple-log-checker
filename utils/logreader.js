@@ -3,20 +3,6 @@ function LogReader ( key, information, currentNetwork ) {
   this.__information = information;
   this.__network     = currentNetwork;
 
-  // Forced creation is required, as while
-  // destroying ipset is locking the process.
-  //
-  // If ipset lists are not set, create them
-  if ( !global.DEBUG ) {
-    if ( !currentNetwork.__fromList.contains( key ) ) {
-      currentNetwork.__createIpSetList( key );
-    }
-  } else {
-    if ( !currentNetwork.__waitingIpList.hasOwnProperty( key ) ) {
-      currentNetwork.__waitingIpList[ key ] = [];
-    }
-  }
-
   this.__startReading();
   this.__stopped = false;
 }

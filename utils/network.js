@@ -99,8 +99,8 @@ Network.prototype.__banNetList = function ( ip, net, from, ipLimit ) {
 };
 
 Network.prototype.destroy = function ( from ) {
-  this.__exec( global.COMMANDS.DESTROYIP.localizer( from, from ) );
-  this.__exec( global.COMMANDS.DESTROYNET.localizer( from, from ) );
+  this.__exec( global.COMMANDS.DESTROYIP.localizer( from, from ), { timeout: 1000 } );
+  this.__exec( global.COMMANDS.DESTROYNET.localizer( from, from ), { timeout: 1000 } );
 };
 
 Network.prototype.ban = function ( ip, from, attemptLimit, ipLimit ) {
@@ -146,6 +146,18 @@ Network.prototype.ip = function ( ips, from, attemptLimit, ipLimit ) {
       if ( this.__wait ) {
         this.__waitingIpList[ from ].push( { ip: ip, from: from, attemptLimit: attemptLimit, ipLimit: ipLimit } );
         continue;
+      }
+
+      // If ipset lists are not set, create them
+      if ( !global.DEBUG ) {
+        if ( !this.__fromList.contains( from ) ) {
+          this.__createIpSetList( from );
+          continue;
+        }
+      } else {
+        if ( !this.__waitingIpList.hasOwnProperty( from ) ) {
+          this.__waitingIpList[ from ] = [];
+        }
       }
 
       this.ban( ip, from, attemptLimit, ipLimit );
