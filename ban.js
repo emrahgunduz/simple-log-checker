@@ -120,6 +120,7 @@ function tryGlobalSafeList () {
 
 process.stdin.resume(); // So the program will not close instantly
 
+/*
 function exitHandler ( options, err ) {
   if ( options.cleanup ) {
     global.logger( "EXIT", "Process stop received, terminating jobs, please wait..." );
@@ -139,3 +140,4 @@ function exitHandler ( options, err ) {
 process.on( "exit", exitHandler.bind( null, { cleanup: true } ) );
 process.on( "SIGINT", exitHandler.bind( null, {} ) );
 process.on( "uncaughtException", exitHandler.bind( null, {} ) );
+*/
