@@ -36,13 +36,19 @@ Network.prototype.__createIpSetList = function ( from ) {
 };
 
 Network.prototype.__runCommand = function ( command, from ) {
-  this.__exec( command, function ( error ) {
-    if ( error ) {
-      if ( !global.DEBUG ) {
-        global.logger( from, "ERROR: Could not write to ipset table: " + command );
+  try {
+    this.__exec( command, function ( error ) {
+      if ( error ) {
+        if ( !global.DEBUG ) {
+          global.logger( from, "ERROR: Could not write to ipset table: " + command );
+        }
       }
+    } );
+  } catch ( err ) {
+    if ( !global.DEBUG ) {
+      global.logger( from, err );
     }
-  } );
+  }
 };
 
 Network.prototype.__ip = function ( ip, from ) {
